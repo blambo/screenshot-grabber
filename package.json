@@ -1,0 +1,15 @@
+{
+  "name": "screenshot-grabber",
+  "version": "0.1.0",
+  "description": "Grabs screenshots of a website at multiple resolutions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "blambo@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "nightmare": "3.0.1",
+    "q": "1.5.1"
+  }
+}
