@@ -30,26 +30,32 @@ if (process.argv.length < 4) {
 var url = process.argv[2];
 var name = process.argv[3];
 
-var location = screenshotFolder + '/' + name;
+var location = screenshotFolder;
 
 
 /* SCREENSHOTTERS */
 
 var getDesktopShot = function() {
-  var nightmare = new Nightmare();
+  var nightmare = new Nightmare({
+    frame: false,
+    useContentSize: true
+  });
 
   return nightmare
   .viewport(1920, 1080)
   .goto(url)
   .wait(1000)
-  .screenshot(location + "/top_desktop.png")
+  .screenshot(location + `/top-desktop/${name}-top-desktop.png`)
   .scrollTo(1080, 0)
-  .screenshot(location + "/scrolled_desktop.png")
+  .screenshot(location + `/scrolled-desktop/${name}-scrolled-desktop.png`)
   .end()
 }
 
 var getMobileShot = function() {
-  var nightmare = new Nightmare();
+  var nightmare = new Nightmare({
+    frame: false,
+    useContentSize: true
+  });
 
 
   return nightmare
@@ -58,15 +64,25 @@ var getMobileShot = function() {
     .wait(1000)
     .scrollTo(0, 0)
     .wait(100)
-    .screenshot(location + "/top_mobile.png")
+    .screenshot(location + `/top-mobile/${name}-top-mobile.png`)
     .scrollTo(1136, 0)
-    .screenshot(location + "/scrolled_mobile.png")
+    .screenshot(location + `/scrolled-mobile/${name}-scrolled-mobile.png`)
     .end()
 }
 
 // Creates the screenshot directory if it doesn't exist currently
-if (!fs.existsSync(screenshotFolder)) {
-  fs.mkdirSync(screenshotFolder);
+var locations = [
+  "",
+  "/top-desktop",
+  "/top-mobile",
+  "/scrolled-desktop",
+  "/scrolled-mobile"
+];
+
+for (var i = 0; i < locations.length; i++) {
+  if (!fs.existsSync(location + locations[i])) {
+    fs.mkdirSync(location + locations[i]);
+  }
 }
 
 // Actually make the screenshots
