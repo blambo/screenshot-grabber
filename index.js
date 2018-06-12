@@ -15,13 +15,18 @@ var properUsageString = function(errorMsg) {
   }
   usage += '\n';
 
-  usage += 'To use this script, provide a url and a name to use for the screenshot folder'
-  usage += '\nE.g. node index.js https://google.com sample'
+  usage += 'To use this script, provide a url and name pair for each site you wish to screenshote'
+  usage += '\nE.g. node index.js https://google.com sample https://yahoo.com sample2'
   return usage
 }
 
 if (process.argv.length < 4) {
   console.log(properUsageString("Not enough arguments given"));
+  return
+}
+
+if (process.argv.length % 2 !== 0) {
+  console.log(properUsageString("Doesn't seem like pairs were given. I need pairs of urls and names"));
   return
 }
 
@@ -86,10 +91,27 @@ for (var i = 0; i < locations.length; i++) {
 }
 
 // Actually make the screenshots
-fs.mkdir(location, function(err) {
-  q.all([ getDesktopShot(), getMobileShot() ])
-  .then(function() {
-    console.log("DONE");
-  })
-  .done()
-});
+var takeScreenshot = function(url, name) {
+
+  return q.all([ getDesktopShot(), getMobileShot() ])
+
+};
+
+
+var screenshotting = [];
+
+for ( var i = 2; i < process.argv.length; i += 2) {
+  var url = process.argv[i];
+  var name = process.argv[i + 1];
+
+  screenshotting.push(takeScreenshot(url, name));
+}
+
+q.all(screenshotting)
+.then(function() {
+  console.log("DONE");
+})
+.catch(function(err) {
+  console.error(err);
+})
+.done();
